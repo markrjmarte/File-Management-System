@@ -46,23 +46,27 @@ Class Action {
 		extract($_POST);
 		$data = " name ='".$name."' ";
 		$data .= ", parent_id ='".$parent_id."' ";
+		
 		if(empty($id)){
 			$data .= ", user_id ='".$_SESSION['login_id']."' ";
 			
 			// Check if the folder name exists for the given parent_id
-			$check = $this->db->query("SELECT * FROM folders where user_id ='".$_SESSION['login_id']."' and name  ='".$name."' and parent_id ='".$parent_id."'")->num_rows;
+			$check = $this->db->query("SELECT * FROM folders where user_id ='".$_SESSION['login_id']."' and name ='".$name."' and parent_id ='".$parent_id."'")->num_rows;
 			if($check > 0){
-				return json_encode(array('status'=>2,'msg'=> 'Folder name already exists for this parent'));
+				return json_encode(array('status'=>2,'msg'=> 'Folder name already exists'));
 			}else{
 				$save = $this->db->query("INSERT INTO folders set ".$data);
-				if($save)
+				if($save){
+					$username = $_SESSION['login_username'];
+					$this->db->query("INSERT INTO users_logs (users, status, dates) VALUES ('".$username."', 'Created the folder $name', NOW())");
 					return json_encode(array('status'=>1));
+				}
 			}
 		}else{
 			// Check if the folder name exists for the given parent_id, excluding the current folder
-			$check = $this->db->query("SELECT * FROM folders where user_id ='".$_SESSION['login_id']."' and name  ='".$name."' and parent_id ='".$parent_id."' and id !=".$id)->num_rows;
+			$check = $this->db->query("SELECT * FROM folders where user_id ='".$_SESSION['login_id']."' and name ='".$name."' and parent_id ='".$parent_id."' and id !=".$id)->num_rows;
 			if($check > 0){
-				return json_encode(array('status'=>2,'msg'=> 'Folder name already exists for this parent'));
+				return json_encode(array('status'=>2,'msg'=> 'Folder name already exists'));
 			}else{
 				$save = $this->db->query("UPDATE folders set ".$data." where id =".$id);
 				if($save)
@@ -85,8 +89,11 @@ Class Action {
 				return json_encode(array('status'=>2,'msg'=> 'Template name already exists for this parent'));
 			}else{
 				$save = $this->db->query("INSERT INTO template set ".$data);
-				if($save)
+				if($save){
+					$username = $_SESSION['login_username'];
+					$this->db->query("INSERT INTO users_logs (users, status, dates) VALUES ('".$username."', 'Created the folder $name', NOW())");
 					return json_encode(array('status'=>1));
+				}
 			}
 		}else{
 			// Check if the template name exists for the given parent_id, excluding the current template
@@ -101,7 +108,6 @@ Class Action {
 		}
 	}
 	
-
 	function save_folder_notary(){
 		extract($_POST);
 		$data = " name ='".$name."' ";
@@ -115,8 +121,11 @@ Class Action {
 				return json_encode(array('status'=>2,'msg'=> 'Notary folder name already exists for this parent'));
 			}else{
 				$save = $this->db->query("INSERT INTO notary set ".$data);
-				if($save)
+				if($save){
+					$username = $_SESSION['login_username'];
+					$this->db->query("INSERT INTO users_logs (users, status, dates) VALUES ('".$username."', 'Created the folder $name', NOW())");
 					return json_encode(array('status'=>1));
+				}
 			}
 		}else{
 			// Check if the notary folder name exists for the given parent_id, excluding the current notary folder
@@ -132,12 +141,13 @@ Class Action {
 	}
 	
 	
-
 	function delete_folder(){
 		extract($_POST);
 		$delete = $this->db->query("DELETE FROM folders where id =".$id);
 		if($delete)
 			echo 1;
+		$username = $_SESSION['login_username'];
+		$this->db->query("INSERT INTO users_logs (users, status, dates) VALUES ('".$username."', 'Deleted a folder', NOW())");
 	}
 
 	function delete_folder_template(){
@@ -145,6 +155,8 @@ Class Action {
 		$delete = $this->db->query("DELETE FROM template where id =".$id);
 		if($delete)
 			echo 1;
+		$username = $_SESSION['login_username'];
+		$this->db->query("INSERT INTO users_logs (users, status, dates) VALUES ('".$username."', 'Deleted a folder ', NOW())");
 	}
 
 	function delete_folder_notary(){
@@ -152,6 +164,8 @@ Class Action {
 		$delete = $this->db->query("DELETE FROM notary where id =".$id);
 		if($delete)
 			echo 1;
+		$username = $_SESSION['login_username'];
+		$this->db->query("INSERT INTO users_logs (users, status, dates) VALUES ('".$username."', 'Deleted a folder ', NOW())");
 	}
 
 	function delete_file(){
@@ -162,6 +176,8 @@ Class Action {
 					unlink('assets1/uploads/'.$path);
 					return 1;
 				}
+		$username = $_SESSION['login_username'];
+		$this->db->query("INSERT INTO users_logs (users, status, dates) VALUES ('".$username."', 'Deleted a file', NOW())");
 	}
 	function delete_file_template(){
 		extract($_POST);
@@ -171,6 +187,8 @@ Class Action {
 					unlink('assets1/uploads/'.$path);
 					return 1;
 				}
+		$username = $_SESSION['login_username'];
+		$this->db->query("INSERT INTO users_logs (users, status, dates) VALUES ('".$username."', 'Deleted a file', NOW())");
 	}
 
 	function delete_file_notary(){
@@ -181,6 +199,8 @@ Class Action {
 					unlink('assets1/uploads/'.$path);
 					return 1;
 				}
+		$username = $_SESSION['login_username'];
+		$this->db->query("INSERT INTO users_logs (users, status, dates) VALUES ('".$username."', 'Deleted a file', NOW())");
 	}
 
 	function save_files(){
@@ -209,6 +229,8 @@ Class Action {
 						$data .= ", is_public = 0 ";
 
 						$save = $this->db->query("INSERT INTO files set ".$data);
+						$username = $_SESSION['login_username'];
+						$this->db->query("INSERT INTO users_logs (users, status, dates) VALUES ('".$username."', 'Added a file called $file[0]', NOW())");
 						if($save)
 						return json_encode(array('status'=>1));
 		
@@ -254,6 +276,8 @@ Class Action {
 						$data .= ", is_public = 0 ";
 
 						$save = $this->db->query("INSERT INTO template_files set ".$data);
+						$username = $_SESSION['login_username'];
+						$this->db->query("INSERT INTO users_logs (users, status, dates) VALUES ('".$username."', 'Added a file called $file[0]', NOW())");
 						if($save)
 						return json_encode(array('status'=>1));
 		
@@ -299,6 +323,8 @@ Class Action {
 						$data .= ", is_public = 0 ";
 
 						$save = $this->db->query("INSERT INTO notary_files set ".$data);
+						$username = $_SESSION['login_username'];
+						$this->db->query("INSERT INTO users_logs (users, status, dates) VALUES ('".$username."', 'Added a file called $file[0]', NOW())");
 						if($save)
 						return json_encode(array('status'=>1));
 		
@@ -327,6 +353,8 @@ Class Action {
 			$file[0] = $file[0] .' ||'.($chk->num_rows);
 			}
 		$save = $this->db->query("UPDATE files set name = '".$name."' where id=".$id);
+		$username = $_SESSION['login_username'];
+		$this->db->query("INSERT INTO users_logs (users, status, dates) VALUES ('".$username."', 'Renamed a file into $name.$type', NOW())");
 		if($save){
 				return json_encode(array('status'=>1,'new_name'=>$file[0].'.'.$file[1]));
 		}
@@ -341,6 +369,8 @@ Class Action {
 			$file[0] = $file[0] .' ||'.($chk->num_rows);
 			}
 		$save = $this->db->query("UPDATE template_files set name = '".$name."' where id=".$id);
+		$username = $_SESSION['login_username'];
+		$this->db->query("INSERT INTO users_logs (users, status, dates) VALUES ('".$username."', 'Renamed a file into $name.$type', NOW())");
 		if($save){
 				return json_encode(array('status'=>1,'new_name'=>$file[0].'.'.$file[1]));
 		}
@@ -355,6 +385,8 @@ Class Action {
 			$file[0] = $file[0] .' ||'.($chk->num_rows);
 			}
 		$save = $this->db->query("UPDATE notary_files set name = '".$name."' where id=".$id);
+		$username = $_SESSION['login_username'];
+		$this->db->query("INSERT INTO users_logs (users, status, dates) VALUES ('".$username."', 'Renamed a file into $name.$type', NOW())");
 		if($save){
 				return json_encode(array('status'=>1,'new_name'=>$file[0].'.'.$file[1]));
 		}
@@ -362,7 +394,7 @@ Class Action {
 
 	function save_user(){
 		extract($_POST);
-	
+
 		$data = " name = '$name' ";
 		$data .= ", username = '$username' ";
 		$data .= ", password = '$password' ";
@@ -420,7 +452,9 @@ Class Action {
 
 	function delete_user(){
 		extract($_POST);
+		$username = $_SESSION['login_username'];
 		$delete = $this->db->query("DELETE FROM users where id =".$id);
+		$this->db->query("INSERT INTO users_logs (users, status, dates) VALUES ('".$username."', 'Deleted a user', NOW())");
 		if($delete)
 			echo 1;
 	}
