@@ -134,6 +134,9 @@ CREATE TABLE `users` (
   `job` varchar(200) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+INSERT INTO `users` (`id`, `name`, `username`, `password`, `type`) VALUES
+(1, 'Administrator', 'admin', 'admin123', 1)
+
 -- --------------------------------------------------------
 
 --
