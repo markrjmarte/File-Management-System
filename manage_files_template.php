@@ -13,10 +13,7 @@ $qry = $conn->query("SELECT * FROM template_files where id=".$_GET['id']);
 	<form action="" id="manage-files">
 		<input type="hidden" name="id" value="<?php echo isset($_GET['id']) ? $_GET['id'] :'' ?>">
 		<input type="hidden" name="folder_id" value="<?php echo isset($_GET['fid']) ? $_GET['fid'] :'' ?>">
-		<!-- <div class="form-group">
-			<label for="name" class="control-label">File Name</label>
-			<input type="text" name="name" id="name" value="<?php echo isset($meta['name']) ? $meta['name'] :'' ?>" class="form-control">
-		</div> -->
+		
 		<?php if(!isset($_GET['id']) || empty($_GET['id'])): ?>
 		<div class="input-group mb-3">
 		  <div class="input-group-prepend">
@@ -28,6 +25,13 @@ $qry = $conn->query("SELECT * FROM template_files where id=".$_GET['id']);
 		  </div>
 		</div>
 	<?php endif; ?>
+			
+		<div class="form-group" >
+			<label for="name" class="control-label">
+				<?php $name = isset($meta['name']) ? $meta['name'] : ''; ?>
+				<span style="font-weight: bold; text-transform: uppercase; font-size: 1.5em;"><?php echo $name; ?></span>
+			</label>
+		</div>
 		<div class="form-group">
 			<label for="" class="control-label">Description</label>
 			<textarea name="description" id="" cols="30" rows="10" class="form-control"><?php echo isset($meta['description']) ? $meta['description'] :'' ?></textarea>

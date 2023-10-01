@@ -216,11 +216,7 @@ a.custom-menu-list span.icon{
 												?>
 
 												<tr class='file-item' data-id="<?php echo $row['id'] ?>" data-name="<?php echo $name ?>" style="background-color: <?php echo $random_color; ?>">
-													<td>
-															<a href="display_file.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-outline-primary" title="View">
-																<i class="fa fa-eye"></i>
-															</a>
-														</td>
+													<td></td>
 													<td><large><span><i class="fa <?php echo $icon ?>"></i></span><b class="to_file"> <?php echo $name ?></b></large>
 														<input type="text" class="rename_file" value="<?php echo $row['name'] ?>" data-id="<?php echo $row['id'] ?>" data-type="<?php echo $row['file_type'] ?>" style="display: none">
 													</td>
@@ -245,6 +241,7 @@ a.custom-menu-list span.icon{
 	<a href="javascript:void(0)" class="custom-menu-list file-option edit bg-info text-white"><i class="bi bi-pen-fill mr-2"></i> Rename</a>
 	<a href="javascript:void(0)" class="custom-menu-list file-option download bg-warning text-white"><i class="bi bi-cloud-arrow-down-fill mr-2"></i>  Download</a>
 	<a href="javascript:void(0)" class="custom-menu-list file-option delete bg-danger text-white"><i class="bi bi-trash-fill mr-2"></i> Delete</a>
+	<a href="javascript:void(0)" class="custom-menu-list file-option share-file bg-secondary text-white"><i class="bi bi-share-fill mr-2"></i> Share</a>
 </div>
 
 <script>
@@ -290,6 +287,7 @@ a.custom-menu-list span.icon{
         custom.find('.edit').attr('data-id',$(this).attr('data-id'))
         custom.find('.delete').attr('data-id',$(this).attr('data-id'))
         custom.find('.download').attr('data-id',$(this).attr('data-id'))
+		custom.find('.share-file').attr('data-id',$(this).attr('data-id'))
     custom.appendTo("body")
 	custom.css({top: event.pageY + "px", left: event.pageX + "px"});
 
@@ -305,6 +303,12 @@ a.custom-menu-list span.icon{
 	$("div.file.custom-menu .download").click(function(e){
 		e.preventDefault()
 		window.open('download.php?id='+$(this).attr('data-id'))
+	})
+	$("div.file.custom-menu .share-file").click(function(e){
+		e.preventDefault()
+		if($(this).find('input.rename_file').is(':visible') == true)
+    	return false;
+		uni_modal($(this).attr('data-name'),'manage_files.php?<?php echo $folder_parent ?>&id='+$(this).attr('data-id'))
 	})
 
 	$('.rename_file').keypress(function(e){
@@ -337,7 +341,8 @@ a.custom-menu-list span.icon{
 	$('.file-item').click(function(){
 		if($(this).find('input.rename_file').is(':visible') == true)
     	return false;
-		uni_modal($(this).attr('data-name'),'manage_files.php?<?php echo $folder_parent ?>&id='+$(this).attr('data-id'))
+		var fileId = $(this).attr('data-id');
+    	window.open('display_file.php?id=' + fileId);
 	})
 	$(document).bind("click", function(event) {
     $("div.custom-menu").hide();
@@ -354,6 +359,7 @@ a.custom-menu-list span.icon{
 
 });
 	$(document).ready(function() {
+		
 		$('#search').keyup(function() {
 			var searchTerm = $(this).val().toLowerCase();
 
