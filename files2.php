@@ -12,7 +12,7 @@ while ($row = $filesCountQuery->fetch_assoc()) {
     $folderCounts[$row['folder_id']] = $row['count'];
 }
 
-$files = $conn->query("SELECT * FROM files where folder_id = $folder_parent and user_id = '".$_SESSION['login_id']."'  order by name asc");
+$files = $conn->query("SELECT * FROM files where is_public = 1 or folder_id = $folder_parent and user_id = '".$_SESSION['login_id']."'  order by name asc");
 ?>
 
 <style>

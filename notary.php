@@ -11,7 +11,7 @@ while ($row = $filesCountQuery->fetch_assoc()) {
     $folderCounts[$row['folder_id']] = $row['count'];
 }
 
-$notary_files = $conn->query("SELECT * FROM notary_files where folder_id = $notary_parent and user_id = '".$_SESSION['login_id']."'  order by name asc");
+$notary_files = $conn->query("SELECT * FROM notary_files where is_public = 1 or folder_id = $notary_parent and user_id = '".$_SESSION['login_id']."'  order by name asc");
 ?>
 
 <style>
@@ -301,7 +301,7 @@ a.custom-menu-list span.icon{
 		e.preventDefault()
 		if($(this).find('input.rename_file').is(':visible') == true)
     	return false;
-		uni_modal($(this).attr('data-name'),'manage_files.php?<?php echo $notary_parent ?>&id='+$(this).attr('data-id'))
+		uni_modal($(this).attr('data-name'),'manage_files_notary.php?<?php echo $notary_parent ?>&id='+$(this).attr('data-id'))
 	})
 
 	$('.rename_file').keypress(function(e){
@@ -335,7 +335,7 @@ a.custom-menu-list span.icon{
 		if($(this).find('input.rename_file').is(':visible') == true)
     	return false;
 		var fileId = $(this).attr('data-id');
-    	window.open('display_file.php?id=' + fileId);
+    	window.open('display_file_notary.php?id=' + fileId);
 	})
 	$(document).bind("click", function(event) {
     $("div.custom-menu").hide();
